@@ -3,7 +3,8 @@ import { View, Text } from "react-native";
 import { FontAwesome5 } from "@expo/vector-icons";
 
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Home, Pomodoro, Stats } from "./Screens";
+import { Home, Stats } from "./Screens";
+import { Pomodoro } from "./Pomodoro";
 
 const BotStack = createBottomTabNavigator();
 
@@ -16,8 +17,10 @@ export const HomeStack = () => {
         inactiveTintColor: "#959090",
         style: {
           height: 60,
-          paddingRight: 20,
-          paddingLeft: 20,
+          paddingRight: "10%",
+          paddingLeft: "10%",
+          borderTopWidth: 0,
+          elevation: 0,
         },
       }}
     >
