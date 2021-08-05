@@ -7,7 +7,7 @@ export class Pomodoro extends Component {
 
     this.state = {
       start: false,
-      type: 1, //0 = Pomodoro, 1 = Stopwatch, 2 = Regular Timer
+      type: 0, //0 = Pomodoro, 1 = Stopwatch, 2 = Regular Timer
       hour: 0,
       min: 30, //Default: 30 = Pomodoro, 0, 0
       sec: 0,

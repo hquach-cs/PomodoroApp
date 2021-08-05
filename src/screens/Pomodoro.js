@@ -1,135 +1,198 @@
-import React, { Component, useState, useEffect } from "react";
+import React, { Component } from "react";
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
+  TouchableHighlight,
   StatusBar,
   Switch,
+  TouchableHighlightBase,
 } from "react-native";
 
 import { FontAwesome5 } from "@expo/vector-icons";
 import { theme } from "./../../assets/theme";
 
-export const Pomodoro = () => {
-  var interval = null;
-  const habit_data = [
-    {
-      id: 0,
-      text: "Hydrate",
-      time: "15:00",
-      state: true,
-    },
-    {
-      id: 1,
-      text: "Bathroom",
-      time: "20:00",
-      state: false,
-    },
-  ];
+export class Pomodoro extends Component {
+  constructor(props) {
+    super(props);
 
-  const timer_data = {
-    hour: 0,
-    min: 39,
-    sec: 57,
-    msec: 0,
-    start: false,
-    breaks_total: 3,
-    breaks_done: 1,
-    habits: 2,
+    this.state = {
+      start: false,
+      hour: 0,
+      min: 30, //Default: 30 = Pomodoro, 0, 0
+      sec: 0,
+      msec: 0,
+      breaks_done: 1,
+      breaks_total: 3,
+      habits: [
+        {
+          id: 0,
+          text: "Hydrate",
+          time: "15:00",
+          state: true,
+        },
+        {
+          id: 1,
+          text: "Bathroom",
+          time: "20:00",
+          state: false,
+        },
+      ],
+    };
+
+    this.interval = null;
+  }
+
+  padToTwo = (number) => (number <= 9 ? `0${number}` : number);
+
+  handleToggle = () => {
+    this.setState(
+      {
+        start: !this.state.start,
+      },
+      () => {
+        this.handlePomodoroStart();
+      }
+    );
   };
 
-  const handleToggle = () => {
-    timer.start = !timer.start;
-    setTimer(timer);
-    handlePomodoro();
-  };
-
-  const handlePomodoro = () => {
-    if (timer.start) {
-      interval = setInterval(() => {
-        if (timer.msec !== 0) {
-          timer.msec -= 1;
-          setTimer(timer);
-        } else if (timer.sec !== 0) {
-          timer.msec = 59;
-          timer.sec -= 1;
-          setTimer(timer);
-        } else if (timer.min !== 0) {
-          timer.msec = 59;
-          timer.sec = 59;
-          timer.min -= 1;
-          setTimer(timer);
+  handlePomodoroStart = () => {
+    if (this.state.start) {
+      this.interval = setInterval(() => {
+        if (this.state.msec !== 0) {
+          this.setState({
+            msec: this.state.msec - 1,
+          });
+        } else if (this.state.sec !== 0) {
+          this.setState({
+            msec: 59,
+            sec: --this.state.sec,
+          });
+        } else if (this.state.min !== 0) {
+          this.setState({
+            msec: 59,
+            sec: 59,
+            min: --this.state.min,
+          });
         } else {
-          timer.msec = 59;
-          timer.sec = 59;
-          timer.min = 59;
-          timer.hour -= 1;
-          setTimer(timer);
+          this.setState({
+            msec: 59,
+            sec: 59,
+            min: 59,
+            hour: --this.state.hour,
+          });
         }
       }, 1);
     } else {
-      clearInterval(interval);
+      clearInterval(this.interval);
     }
   };
 
-  const [habits, setHabits] = useState(habit_data);
-  const [timer, setTimer] = useState(timer_data);
+  handlePomodoroReset = () => {
+    this.setState({
+      start: false,
+      hour: 0,
+      min: 30,
+      sec: 0,
+      msec: 0,
+    });
 
-  const toggleHabit = (id) => {
-    habits[id].state = !habits[id].state;
-    setHabits([...habits]);
+    clearInterval(this.interval);
   };
 
-  var habit_list = [];
-  for (let i = 0; i < habits.length; i++) {
-    habit_list.push(
-      <Habit
-        key={i}
-        habit={habits[i].text}
-        time={habits[i].time}
-        toggle={() => toggleHabit(i)}
-        state={habits[i].state}
-      />
-    );
-  }
+  getBreaks = () => {
+    var breaks_list = [];
+    for (let i = 0; i < this.state.breaks_done; i++) {
+      breaks_list.push(
+        <View key={i} style={timer_styles.timer_breaks_circle_done}></View>
+      );
+    }
+    for (let i = this.state.breaks_done; i < this.state.breaks_total; i++) {
+      breaks_list.push(
+        <View key={i} style={timer_styles.timer_breaks_circle}></View>
+      );
+    }
+    return breaks_list;
+  };
 
-  var breaks_list = [];
-  for (let i = 0; i < timer.breaks_done; i++) {
-    breaks_list.push(
-      <View key={i} style={timer_styles.timer_breaks_circle_done}></View>
-    );
-  }
-  for (let i = timer.breaks_done; i < timer.breaks_total; i++) {
-    breaks_list.push(
-      <View key={i} style={timer_styles.timer_breaks_circle}></View>
-    );
-  }
+  toggleHabit = (id) => {
+    var temp_habits = this.state.habits;
+    temp_habits[id].state = !temp_habits[id].state;
+    this.setState({
+      habits: temp_habits,
+    });
+  };
 
-  return (
-    <View style={styles.container}>
-      <Title />
-      <View style={styles.content_container}>
-        <Header timer={timer} breaks={breaks_list} toggle={handleToggle} />
+  createHabits = () => {
+    var habit_list = [];
+    for (let i = 0; i < this.state.habits.length; i++) {
+      habit_list.push(
+        <Habit
+          key={i}
+          habit={this.state.habits[i].text}
+          time={this.state.habits[i].time}
+          toggle={() => this.toggleHabit(i)}
+          state={this.state.habits[i].state}
+        />
+      );
+    }
+    return habit_list;
+  };
 
-        {habit_list}
-        <TouchableOpacity
-          style={styles.habit_button}
-          activeOpacity={1}
-          onPress={() => {
-            console.log("Habit's Button");
-          }}
-        >
-          <FontAwesome5
-            name="plus"
-            size={20}
-            color={theme.colors.white}
-          ></FontAwesome5>
-        </TouchableOpacity>
+  render() {
+    return (
+      <View style={styles.container}>
+        <Title />
+        <View style={styles.content_container}>
+          <View style={styles.header_container}>
+            <Text style={timer_styles.timer_text}>
+              {this.padToTwo(this.state.hour) +
+                ":" +
+                this.padToTwo(this.state.min) +
+                ":" +
+                this.padToTwo(this.state.sec)}
+            </Text>
+            <View style={timer_styles.timer_breaks_container}>
+              {/* {this.getBreaks()} */}
+            </View>
+            <Text>Hydrate in 10 min</Text>
+            <View style={timer_styles.timer_button_container}>
+              <TouchableHighlight
+                style={timer_styles.timer_button}
+                onPress={this.handlePomodoroReset}
+              >
+                <Text style={timer_styles.timer_button_text}>Reset</Text>
+              </TouchableHighlight>
+              <TouchableHighlight
+                style={timer_styles.timer_button}
+                onPress={this.handleToggle}
+              >
+                <Text style={timer_styles.timer_button_text}>
+                  {this.state.start ? "Stop" : "Start"}
+                </Text>
+              </TouchableHighlight>
+            </View>
+          </View>
+          {this.createHabits()}
+          <TouchableOpacity
+            style={styles.habit_button}
+            activeOpacity={1}
+            onPress={() => {
+              console.log("Habit's Button");
+            }}
+          >
+            <FontAwesome5
+              name="plus"
+              size={20}
+              color={theme.colors.white}
+            ></FontAwesome5>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
-  );
-};
+    );
+  }
+}
 
 const Title = () => {
   return (
@@ -152,46 +215,6 @@ const Title = () => {
       >
         <FontAwesome5 name="bars" size={24} color={theme.colors.primary} />
       </TouchableOpacity>
-    </View>
-  );
-};
-
-const Header = (props) => {
-  const padToTwo = (number) => (number <= 9 ? `0${number}` : number);
-  var time =
-    padToTwo(props.timer.hour) +
-    ":" +
-    padToTwo(props.timer.min) +
-    ":" +
-    padToTwo(props.timer.sec);
-  return (
-    <View style={styles.header_container}>
-      <Text style={timer_styles.timer_text}>{time}</Text>
-      <View style={timer_styles.timer_breaks_container}>{props.breaks}</View>
-      <Text>Hydrate in 10 min</Text>
-      <View style={timer_styles.timer_button_container}>
-        <TouchableOpacity
-          style={timer_styles.timer_button}
-          activeOpacity={1}
-          onPress={() => {
-            console.log("Timer Reset");
-          }}
-        >
-          <Text style={timer_styles.timer_button_text}>Reset</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          style={timer_styles.timer_button}
-          activeOpacity={1}
-          onPress={() => {
-            console.log("Timer Toggle");
-            props.toggle();
-          }}
-        >
-          <Text style={timer_styles.timer_button_text}>
-            {props.timer.start ? "Stop" : "Start"}
-          </Text>
-        </TouchableOpacity>
-      </View>
     </View>
   );
 };

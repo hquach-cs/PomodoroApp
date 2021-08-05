@@ -5,6 +5,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Home, Stats } from "./Screens";
 import { Pomodoro } from "./Pomodoro";
+// import { Pomodoro } from "./Pomodoro_tmp";
 
 const BotStack = createBottomTabNavigator();
 
