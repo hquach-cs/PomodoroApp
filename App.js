@@ -22,11 +22,6 @@ export default function App() {
 
   return (
     <NavigationContainer>
-      <StatusBar
-        backgroundColor="transparent"
-        translucent={true}
-        barStyle="dark-content"
-      />
       <AuthStack.Navigator
         screenOptions={{
           headerShown: false,
