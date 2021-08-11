@@ -13,7 +13,7 @@ import {
 import { FontAwesome5 } from "@expo/vector-icons";
 import { theme } from "./../../assets/theme";
 
-export const Home = () => {
+export const Home = ({ navigation }) => {
   const [tasks, setTasks] = useState([
     { key: "1", task: "Temp Task", hour: "0", min: "40", sec: "0", total: "3" },
     {
@@ -86,7 +86,7 @@ export const Home = () => {
           <TouchableHighlight
             style={styles.task_button_container}
             underlayColor={theme.colors.primary}
-            onPress={() => console.log("Add Task Pressed")}
+            onPress={() => navigation.navigate("Task")}
           >
             <View style={styles.task_button}>
               <FontAwesome5 name="plus" size={18} color={theme.colors.white} />

@@ -9,6 +9,7 @@ import {
   Switch,
   TouchableHighlightBase,
 } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
 import { FontAwesome5 } from "@expo/vector-icons";
 import { theme } from "./../../assets/theme";
