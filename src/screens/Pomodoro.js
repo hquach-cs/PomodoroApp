@@ -7,7 +7,6 @@ import {
   TouchableHighlight,
   StatusBar,
   Switch,
-  TouchableHighlightBase,
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 
@@ -39,10 +38,18 @@ export class Pomodoro extends Component {
           time: "20:00",
           state: false,
         },
+        {
+          id: 3,
+          text: "Stretch",
+          time: "10:00",
+          state: true,
+        },
       ],
     };
 
     this.interval = null;
+    this.navigation = this.props.navigation;
+    this.route = this.props.route;
   }
 
   padToTwo = (number) => (number <= 9 ? `0${number}` : number);
@@ -144,7 +151,7 @@ export class Pomodoro extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Title />
+        <Title navigation={this.navigation} />
         <View style={styles.content_container}>
           <View style={styles.header_container}>
             <Text style={timer_styles.timer_text}>
@@ -195,14 +202,14 @@ export class Pomodoro extends Component {
   }
 }
 
-const Title = () => {
+const Title = (props) => {
   return (
     <View style={styles.title_container}>
       <View style={styles.circle_bg}></View>
       <TouchableOpacity
         activeOpacity={1}
         onPress={() => {
-          console.log("Go Back");
+          props.navigation.goBack();
         }}
       >
         <FontAwesome5 name="arrow-left" size={24} color={theme.colors.white} />

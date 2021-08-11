@@ -65,7 +65,7 @@ export const Home = ({ navigation }) => {
           renderItem={({ item }) => (
             <TouchableHighlight
               underlayColor={theme.colors.primary}
-              onPress={() => console.log(item.task)}
+              onPress={() => navigation.navigate("Pomodoro")}
               style={styles.task_wrapper}
             >
               <View style={styles.task_container}>
