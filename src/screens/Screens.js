@@ -15,14 +15,23 @@ import { theme } from "./../../assets/theme";
 
 export const Home = ({ navigation }) => {
   const [tasks, setTasks] = useState([
-    { key: "1", task: "Temp Task", hour: "0", min: "40", sec: "0", total: "3" },
+    {
+      key: "1",
+      task: "Temp Task",
+      hour: "0",
+      min: "2",
+      sec: "0",
+      breaks: "1",
+      breaksTimer: "1",
+    },
     {
       key: "2",
       task: "Project Intro",
       hour: "0",
       min: "40",
       sec: "0",
-      total: "3",
+      breaks: "3",
+      breaksTimer: "15",
     },
   ]);
 
@@ -65,7 +74,15 @@ export const Home = ({ navigation }) => {
           renderItem={({ item }) => (
             <TouchableHighlight
               underlayColor={theme.colors.primary}
-              onPress={() => navigation.navigate("Pomodoro")}
+              onPress={() =>
+                navigation.navigate("Pomodoro", {
+                  task: item.task,
+                  hour: item.hour,
+                  min: item.min,
+                  breaks: item.breaks,
+                  breaksTimer: item.breaksTimer,
+                })
+              }
               style={styles.task_wrapper}
             >
               <View style={styles.task_container}>

@@ -8,7 +8,6 @@ import {
   StatusBar,
   Switch,
 } from "react-native";
-import { useNavigation } from "@react-navigation/native";
 
 import { FontAwesome5 } from "@expo/vector-icons";
 import { theme } from "./../../assets/theme";
@@ -18,31 +17,33 @@ export class Pomodoro extends Component {
     super(props);
 
     this.state = {
+      timer: 0,
       start: false,
-      hour: 0,
-      min: 30, //Default: 30 = Pomodoro, 0, 0
+      hour: this.props.route.params.hour,
+      min: this.props.route.params.min,
       sec: 0,
       msec: 0,
-      breaks_done: 1,
-      breaks_total: 3,
+      breaks_done: 0,
+      breaks_total: this.props.route.params.breaks,
+      breaks_min: this.props.route.params.breaksTimer,
       habits: [
         {
           id: 0,
           text: "Hydrate",
-          time: "15:00",
-          state: true,
+          time: "15",
+          state: false,
         },
         {
           id: 1,
           text: "Bathroom",
-          time: "20:00",
+          time: "20",
           state: false,
         },
         {
           id: 3,
           text: "Stretch",
-          time: "10:00",
-          state: true,
+          time: "10",
+          state: false,
         },
       ],
     };
@@ -82,6 +83,7 @@ export class Pomodoro extends Component {
             msec: 59,
             sec: 59,
             min: --this.state.min,
+            timer: this.state.timer + 1,
           });
         } else {
           this.setState({
@@ -91,7 +93,13 @@ export class Pomodoro extends Component {
             hour: --this.state.hour,
           });
         }
-      }, 1);
+        if (this.state.timer % this.state.breaksTimer === 0) {
+          console.log("breaks #" + (this.state.breaks_done + 1));
+          this.setState({
+            breaks_done: ++this.state.breaks_done,
+          });
+        }
+      }, 0.05);
     } else {
       clearInterval(this.interval);
     }
@@ -104,6 +112,7 @@ export class Pomodoro extends Component {
       min: 30,
       sec: 0,
       msec: 0,
+      timer: 0,
     });
 
     clearInterval(this.interval);
@@ -151,7 +160,7 @@ export class Pomodoro extends Component {
   render() {
     return (
       <View style={styles.container}>
-        <Title navigation={this.navigation} />
+        <Title navigation={this.navigation} route={this.route} />
         <View style={styles.content_container}>
           <View style={styles.header_container}>
             <Text style={timer_styles.timer_text}>
@@ -162,7 +171,7 @@ export class Pomodoro extends Component {
                 this.padToTwo(this.state.sec)}
             </Text>
             <View style={timer_styles.timer_breaks_container}>
-              {/* {this.getBreaks()} */}
+              {this.getBreaks()}
             </View>
             <Text>Hydrate in 10 min</Text>
             <View style={timer_styles.timer_button_container}>
@@ -214,7 +223,7 @@ const Title = (props) => {
       >
         <FontAwesome5 name="arrow-left" size={24} color={theme.colors.white} />
       </TouchableOpacity>
-      <Text style={styles.title_text}>Pomodoro's Task</Text>
+      <Text style={styles.title_text}>{props.route.params.task}</Text>
       <TouchableOpacity
         activeOpacity={1}
         onPress={() => {
@@ -238,7 +247,7 @@ const Habit = (props) => {
         value={props.state}
         style={({ transform: [{ scaleX: 1.2 }] }, styles.switch)}
       ></Switch>
-      <Text style={styles.habit_text}>{props.time}</Text>
+      <Text style={styles.habit_text}>{props.time + ":00"}</Text>
     </View>
   );
 };
