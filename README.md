@@ -2,7 +2,7 @@
 
 The goal of this project is to increase my knowledge of React Native and mobile design/engineer. Pomodoro is a time management technique that utilizes breaks and "sprints" for better workflow. I decided to make a "Pomodoro" application to one day create an user ready mobile app for the market. Design and development is done solely by me.
 
-<p float="left">
+<p align="center">
 <img src="./screenshots/Homescreen_01.png" alt="Home" width="300" height="600"/>
 <img src="./screenshots/Addscreen_02.png" alt="confirmation" width="300" height="600"/>
 <img src="./screenshots/Taskscreen_01.png" alt="confirmation" width="300" height="600"/>
